@@ -5,14 +5,6 @@ def biggest_descendent(graph: DirectedGraph, root: Any, value: Dict[Any, int]) -
     """
     Finds the biggest descendent value for each node in the graph.
 
-    Example:
-    >>> edges = [(1, 2), (1, 3), (2, 4), (2, 5), (4, 8), (4, 9), (3, 6), (3, 7)]
-    >>> g = DirectedGraph()
-    >>> for edge in edges: g.add_edge(*edge)
-    >>> value = {1: 2, 2: 1, 3: 4, 4: 8, 5: 5, 6: 2, 7: 10, 8:3, 9: 9}
-    >>> biggest_descendent(g, 1, value)
-    {1: 10, 2: 9, 3: 10:, 4: 9, 5: 5, 6: 2, 7: 10, 8: 3, 9: 9}
-
     Parameters
     ----------
     graph : DirectedGraph
@@ -26,6 +18,41 @@ def biggest_descendent(graph: DirectedGraph, root: Any, value: Dict[Any, int]) -
     -------
     biggest_values : Dict[Any, int]
         A dictionary mapping each node in the graph to the biggest descendent value.
+
+    Example:
+    >>> edges = [(1, 2), (1, 3), (2, 4), (2, 5), (4, 8), (4, 9), (3, 6), (3, 7)]
+    >>> g = DirectedGraph()
+    >>> for edge in edges: g.add_edge(*edge)
+    >>> value = {1: 2, 2: 1, 3: 4, 4: 8, 5: 5, 6: 2, 7: 10, 8:3, 9: 9}
+    >>> biggest_descendent(g, 1, value)
+    {1: 10, 2: 9, 3: 10:, 4: 9, 5: 5, 6: 2, 7: 10, 8: 3, 9: 9}
+
+    # Test a graph where all nodes have the same value.
+    # The output should have the same value for all nodes. 
+    >>> edges = [(1, 2), (1, 3), (2, 4), (3, 5)]
+    >>> g = DirectedGraph()
+    >>> for edge in edges: g.add_edge(*edge)
+    >>> value = {1: 5, 2: 5, 3: 5, 4: 5, 5: 5}
+    >>> biggest_descendent(g, 1, value)
+    {1: 5, 2: 5, 3: 5, 4: 5, 5: 5}
+
+    # Test a linear graph where the values are decreasing. 
+    # The maximum descendant value should decrease along the path.
+    >>> edges = [(1, 2), (2, 3), (3, 4)]
+    >>> g = DirectedGraph()
+    >>> for edge in edges: g.add_edge(*edge)
+    >>> value = {1: 4, 2: 3, 3: 2, 4: 1}
+    >>> biggest_descendent(g, 1, value)
+    {1: 4, 2: 3, 3: 2, 4: 1}
+
+    # Test a linear graph where the values are increasing. 
+    # The maximum descendant value should remain the root value until the last node.
+    >>> edges = [(1, 2), (2, 3), (3, 4)]
+    >>> g = DirectedGraph()
+    >>> for edge in edges: g.add_edge(*edge)
+    >>> value = {1: 1, 2: 2, 3: 3, 4: 4}
+    >>> biggest_descendent(g, 1, value)
+    {1: 4, 2: 4, 3: 4, 4: 4}
     """
     biggest_values = {}
     
