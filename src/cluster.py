@@ -1,5 +1,6 @@
 from dsc40graph import UndirectedGraph
 from typing import Dict, Callable, Any, FrozenSet
+from collections import deque
 
 def cluster(graph: UndirectedGraph, weights: Callable[[Any, Any], float], level: float) -> FrozenSet[FrozenSet[Any]]:
     """
@@ -91,6 +92,24 @@ def cluster(graph: UndirectedGraph, weights: Callable[[Any, Any], float], level:
     >>> cluster(g, weights, 1.5)
     (['a'], ['b'])
     """
+    visited = set()
+    clusters = set()
+
+    for node in graph.nodes:
+        if node not in visited:
+            current_cluster = set()
+            queue = deque([node])
+            while queue:
+                current_node = queue.popleft()
+                if current_node not in visited:
+                    visited.add(current_node)
+                    current_cluster.add(current_node)
+                    for neighbor in graph.neighbors(current_node):
+                        if weights(current_node, neighbor) >= level:
+                            queue.append(neighbor)
+            clusters.add(frozenset(current_cluster))
+
+    return frozenset(clusters)
 
     def dfs(node, current_cluster):
         visited.add(node)
