@@ -8,7 +8,7 @@ def biggest_descendent(graph: DirectedGraph, root: Any, value: Dict[Any, int]) -
     Parameters
     ----------
     graph : DirectedGraph
-        Graph of type DirectedGraph from the data100graph package.
+        Graph of type DirectedGraph from the dsc40graph package.
     root : Any
         The root node of the tree.
     value : Dict[Any, int]
