@@ -1,7 +1,7 @@
 from dsc40graph import UndirectedGraph
-from typing import Callable, Any, List, Tuple
+from typing import Dict, Callable, Any, FrozenSet
 
-def cluster(graph: UndirectedGraph, weights: Callable[[Any, Any], float], level: float) -> Tuple:
+def cluster(graph: UndirectedGraph, weights: Callable[[Any, Any], float], level: float) -> FrozenSet[FrozenSet[Any]]:
     """
     Computes the clusters of a weighted graph at a given level.
 
@@ -92,20 +92,20 @@ def cluster(graph: UndirectedGraph, weights: Callable[[Any, Any], float], level:
     (['a'], ['b'])
     """
 
-    def dfs(node, cluster):
-        visited[node] = True
-        cluster.append(node)
+    def dfs(node, current_cluster):
+        visited.add(node)
+        current_cluster.add(node)
         for neighbor in graph.neighbors(node):
-            if weights(node, neighbor) >= level and not visited[neighbor]:
-                dfs(neighbor, cluster)
-    
-    visited = {node: False for node in graph.nodes}
-    clusters = []
+            if neighbor not in visited and weights(node, neighbor) >= level:
+                dfs(neighbor, current_cluster)
+
+    visited = set()
+    clusters = set()
 
     for node in graph.nodes:
-        if not visited[node]:
-            current_cluster = []
+        if node not in visited:
+            current_cluster = set()
             dfs(node, current_cluster)
-            clusters.append(current_cluster)
-    
-    return tuple(clusters)
+            clusters.add(frozenset(current_cluster))
+
+    return frozenset(clusters)
