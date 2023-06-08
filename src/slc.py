@@ -1,5 +1,7 @@
 from dsc40graph import UndirectedGraph
 from disjoint_set_forest import DisjointSetForest
+from operator import itemgetter
+
 
 def slc(graph, d, k):
     """
@@ -52,32 +54,27 @@ def slc(graph, d, k):
     True
     """
 
-    # 1. sort in ascending order by distance
-    sorted_edges = sorted(graph.edges, key=d)
-
-    # 2. create a DisjointSetForest to keep track of the clusters
+    # Create a disjoint set forest with the graph's nodes
     dsf = DisjointSetForest(graph.nodes)
 
-    # 3. Initialize an empty set to store the edges that form the MST
-    C = set()
+    # Create sorted list of all edges in the graph, along with their weights
+    # where an edge is represented as a tuple (weight, node1, node2)
+    edges = [(d(edge), *edge) for edge in graph.edges]
+    edges.sort()
 
-    # 4. Go through all edges in sorted order
-    for edge in sorted_edges:
-        u, v = sorted(edge)
-
-        # 5. If adding this edge does not form a cycle (i.e., u and v are not in the same set)
+    # Keep joining edges with the smallest weights using the 
+    # disjoint set forest until the number of clusters equals k
+    while len(set(dsf.find_set(node) for node in graph.nodes)) > k:
+        _, u, v = edges.pop(0)
         if not dsf.in_same_set(u, v):
-            # 6. Add this edge to the MST
-            C.add(frozenset([u, v]))
-            # 7. Merge the two sets in the DisjointSetForest
             dsf.union(u, v)
 
-    # 8. Until there are k clusters, find the longest edge in the MST and remove it
-    while len(C) > k-1:
-        longest_edge = max(C, key=d)
-        C.remove(longest_edge)
+    # Gather all nodes belonging to the same set in the disjoint set forest
+    clusters = {}
+    for node in graph.nodes:
+        set_representative = dsf.find_set(node)
+        if set_representative not in clusters:
+            clusters[set_representative] = set()
+        clusters[set_representative].add(node)
 
-    # 9. Now, each set in the DisjointSetForest represents a cluster, 
-    # thus we return a frozenset of these clusters
-    print(frozenset(map(frozenset, (dsf.find_set(node) for node in graph.nodes))))
-    return frozenset(map(frozenset, (dsf.find_set(node) for node in graph.nodes)))
+    return frozenset(frozenset(cluster) for cluster in clusters.values())
