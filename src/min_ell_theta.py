@@ -104,3 +104,105 @@ def compute_ell(data, colors, theta):
     num_red_less_than_theta = sum(1 for i in range(len(data)) if data[i] <= theta and colors[i] == 'red')
     num_blue_greater_than_theta = sum(1 for i in range(len(data)) if data[i] > theta and colors[i] == 'blue')
     return num_red_less_than_theta + num_blue_greater_than_theta
+
+
+def minimize_ell(data, colors):
+    """
+    Returns a floating-point number which minimizes the loss L for the particular dataset.
+
+    Parameters
+    ----------
+    data : list
+        of unique real numbers
+    colors : list
+        with each color corresponding to the respective data point
+
+    Returns
+    -------
+    min_theta : float
+        A real number which is the threshold that minimizes the loss.
+
+    >>> minimize_ell([1, 2, 3, 4, 5, 6, 7], ['blue', 'blue', 'blue', 'red', 'red', 'red', 'red'])
+    3.5
+    """
+    min_loss = float('inf')
+    min_theta = None
+    for i in range(len(data) - 1):
+        theta = (data[i] + data[i+1]) / 2
+        loss = compute_ell(data, colors, theta)
+        if loss < min_loss:
+            min_loss = loss
+            min_theta = theta
+    return min_theta
+
+
+def minimize_ell_sorted(data, colors):
+    """
+    Returns a floating-point number which minimizes the loss L for the sorted data and color
+
+    Parameters
+    ----------
+    data : list
+        of unique real numbers sorted in ascending order
+    colors : list
+        colors, with each color corresponding to the respective data point
+
+    Returns
+    -------
+    min_theta : float
+        A real number which is the threshold that minimizes the loss.
+
+    >>> minimize_ell_sorted([1, 2, 3, 4, 5, 6, 7], ['blue', 'blue', 'blue', 'blue', 'red', 'red', 'red', 'red'])
+    4
+
+    >>> data = [1, 2, 3, 4, 5, 6]
+    >>> colors = ['blue', 'blue', 'blue', 'red', 'red', 'red']
+    >>> minimize_ell_sorted(data, colors)
+    3
+
+    >>> data = []
+    >>> colors = []
+    >>> minimize_ell_sorted(data, colors)
+    0
+    
+    >>> data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    >>> colors = ['blue', 'blue', 'blue', 'blue', 'blue', 'red', 'red', 'red', 'red', 'red']
+    >>> minimize_ell_sorted(data, colors)
+    5
+    """
+    if not data or not colors:
+        return 0
+
+    min_loss = float('inf')
+    min_theta = None
+
+    # number of 'blue' points greater than current data point
+    blue_gt_theta = len(data) / 2
+
+    # number of 'red' points less than or equal to current data point
+    red_le_theta = 0
+
+    for i, color in enumerate(colors):
+        if i > 0:
+            # If the current data point is red, increase red_le_theta
+            if color == 'red':
+                red_le_theta += 1
+            # If the current data point is blue, decrease blue_gt_theta
+            else:
+                blue_gt_theta -= 1
+
+        loss = red_le_theta + blue_gt_theta
+
+        if loss < min_loss:
+            min_loss = loss
+            min_theta = data[i]
+
+    return min_theta
+
+
+
+
+
+
+
+    return min_theta
