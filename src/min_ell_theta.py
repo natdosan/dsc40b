@@ -14,7 +14,7 @@ def learn_theta(data, colors):
     -------
     max_blue : int 
         single number θ such that all of the blue points are ≤ θ and 
-        all of the red points are > θ,
+        all of the red points are > θ
 
     # Blue points are less than red points, blue points appearing before red ones.
     >>> learn_theta([1, 2, 3, 4, 5], ['blue', 'blue', 'red', 'red', 'red'])
@@ -47,3 +47,60 @@ def learn_theta(data, colors):
 
     # Return the maximum value of blue points
     return max_blue
+
+def compute_ell(data, colors, theta):
+    """
+    Computes the loss function L(θ) for the given data and colors at a 
+    specific threshold theta.
+
+    Parameters
+    ----------
+    data : list
+        list of input nums
+    colors : list
+        of strings that gives the color of each point i in data
+    theta : float
+        threshold for loss
+
+    Returns
+    -------
+    loss : int 
+        loss of the function
+
+    >>> compute_ell([1.5, 2.5, 3.5, 4.5], ['blue', 'blue', 'red', 'red'], 3)
+    0
+
+    # Edge case: All points are exactly at the threshold
+    >>> compute_ell([2.0, 2.0, 2.0, 2.0], ['blue', 'blue', 'red', 'red'], 2.0)
+    2
+
+    # Edge case: The threshold is lower than all points
+    >>> compute_ell([1.5, 2.5, 3.5, 4.5], ['blue', 'blue', 'red', 'red'], 1.0)
+    2
+
+    # Edge case: The threshold is higher than all points
+    >>> compute_ell([1.5, 2.5, 3.5, 4.5], ['blue', 'blue', 'red', 'red'], 5.0)
+    2
+
+    # Normal case: Threshold correctly separates colors
+    >>> compute_ell([1.5, 2.5, 3.5, 4.5], ['blue', 'blue', 'red', 'red'], 2.5)
+    0
+    
+    # Larger odd-sized inputs
+    >>> compute_ell([1, 2, 3, 4, 5, 6, 7], ['blue', 'blue', 'blue', 'red', 'red', 'red', 'red'], 4)
+    1
+
+    >>> compute_ell([1, 2, 3, 4, 5, 6, 7], ['blue', 'blue', 'blue', 'red', 'red', 'red', 'red'], 3)
+    0
+
+    # Larger even-sized inputs
+    >>> compute_ell([1, 2, 3, 4, 5, 6, 7, 8], ['blue', 'blue', 'blue', 'blue', 'red', 'red', 'red', 'red'], 4)
+    0
+
+    >>> compute_ell([1, 2, 3, 4, 5, 6, 7, 8], ['blue', 'blue', 'blue', 'blue', 'red', 'red', 'red', 'red'], 3)
+    1
+    """
+
+    num_red_less_than_theta = sum(1 for i in range(len(data)) if data[i] <= theta and colors[i] == 'red')
+    num_blue_greater_than_theta = sum(1 for i in range(len(data)) if data[i] > theta and colors[i] == 'blue')
+    return num_red_less_than_theta + num_blue_greater_than_theta
