@@ -198,11 +198,3 @@ def minimize_ell_sorted(data, colors):
             min_theta = data[i]
 
     return min_theta
-
-
-
-
-
-
-
-    return min_theta
